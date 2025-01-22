@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BusinessLogiclayer.DTO;
+using BusinessLogiclayer.HttpClient;
 using BusinessLogiclayer.ServiceContracts;
 using DataAccessLayer.Entities;
 using DataAccessLayer.RepositoryContracts;
@@ -9,7 +10,7 @@ using MongoDB.Driver;
 
 
 namespace BusinessLogiclayer.Services;
-public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IValidator<OrderAddRequest> orderAddRequestValidator, IValidator<OrderUpdateRequest> orderUpdateRequestValidator) : IOrdersService
+public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IValidator<OrderAddRequest> orderAddRequestValidator, IValidator<OrderUpdateRequest> orderUpdateRequestValidator, UsersMicroserviceClient usersMicroserviceClient) : IOrdersService
 {
     //private readonly IOrdersRepository _orderRepository = orderRepository;
     //private readonly IMapper _mapper;
@@ -30,7 +31,12 @@ public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IV
             throw new ArgumentException(errors);
         }
 
-        // TODO: Add Logic for checking if UserId exist in Users MicroService
+
+        UserDTO? user = await usersMicroserviceClient.GetUserByUserID(orderAddRequest.UserID);
+        if (user == null)
+        {
+            throw new ArgumentException("Invalid User ID");
+        }
 
         Order orderInput = mapper.Map<Order>(orderAddRequest);
 
@@ -111,7 +117,11 @@ public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IV
             throw new ArgumentException(errors);
         }
 
-        // TODO: Add Logic for checking if UserId exist in Users MicroService
+        UserDTO? user = await usersMicroserviceClient.GetUserByUserID(orderUpdateRequest.UserID);
+        if (user == null)
+        {
+            throw new ArgumentException("Invalid User ID");
+        }
 
         Order orderInput = mapper.Map<Order>(orderUpdateRequest);
 
