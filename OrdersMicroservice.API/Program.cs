@@ -27,6 +27,10 @@ builder.Services.AddCors(options =>
     });
 });
 
+var usersMicroserviceName = builder.Configuration["UsersMicroserviceName"];
+var usersMicroservicePort = builder.Configuration["UsersMicroservicePort"];
+Console.WriteLine($"http://{usersMicroserviceName}:{usersMicroservicePort}");
+
 builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
 {
     client.BaseAddress = new Uri($"http://{builder.Configuration["UsersMicroserviceName"]}:{builder.Configuration["UsersMicroservicePort"]}");
