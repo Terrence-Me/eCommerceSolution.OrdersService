@@ -12,7 +12,9 @@ services:
       - MONGODB_PORT=27017
       - MONGODB_DATABASE=OrdersDatabase
       - UsersMicroserviceName=users-microservice
-      - UsersMicroservicePort=5000
+      - UsersMicroservicePort=9090
+      - ProductsMicroserviceName=products-microservice
+      - ProductsMicroservicePort=8080
     ports:
       - '7000:8080'
     networks:
@@ -23,7 +25,7 @@ services:
 
 
   mongodb-container:
-    image: mongo
+    image: mongo:latest
     container_name: mongodb-container
     ports:
       - '27017:27017'
@@ -62,46 +64,47 @@ services:
       - products-mysql-network
 
   users-microservice:
-    image: users-microservice:latest
-    environment:
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_ENVIRONMENT=Development
-      - POSTRESS_HOST=postgres-container
-      - POSTRESS_PASSWORD=admin
-      - POSTRESS_USER=postgres
-      - POSTRESS_DATABASE=eCommerceUsers
-      - POSTRESS_PORT=5432
-    ports: 
-      - '5000:8080'
-    networks:
-      - users-postgres-network
-      - ecommerce-network
-    depends_on:
-      - postgres-container
+   image: users-microservice:latest
+   environment:
+    - ASPNETCORE_HTTP_PORTS=8080
+    - ASPNETCORE_HTTP_ENVIRONMENT=Development
+    - POSTGRES_HOST=postgres-container
+    - POSTGRES_PORT=5432
+    - POSTGRES_DATABASE=eCommerceUsers
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=admin
+   ports:
+    - "5000:9090"
+   networks:
+    - users-postgres-network
+    - ecommerce-network
+   depends_on:
+    - postgres-container
+
 
   postgres-container:
-    image: postgres:13
-    environment:
-     - POSTGRES_USER=postgres
-     - POSTGRES_PASSWORD=admin
-     - POSTGRES_DB=eCommerceUsers
-    ports:
-      - '5434:5432'
-    volumes:
-      - ../postgres-init:/docker-entrypoint-initdb.d
-    networks:
-      - users-postgres-network
+   image: postgres:13
+   environment:
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=admin
+    - POSTGRES_DB=eCommerceUsers
+   ports:
+    - "5434:5432"
+   volumes:
+    - ../postgres-init:/docker-entrypoint-initdb.d
+   networks:
+    - users-postgres-network
 
 
 networks:
-  orders-mongodb-network:
-    driver: bridge
-  products-mysql-network:
-    driver: bridge
-  users-postgres-network:
-    driver: bridge
-  ecommerce-network:
-    driver: bridge
+ orders-mongodb-network:
+  driver: bridge
+ products-mysql-network:
+  driver: bridge
+ users-postgres-network:
+  driver: bridge
+ ecommerce-network:
+  driver: bridge
   
 
 

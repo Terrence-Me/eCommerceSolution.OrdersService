@@ -10,14 +10,8 @@ using MongoDB.Driver;
 
 
 namespace BusinessLogiclayer.Services;
-public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IValidator<OrderAddRequest> orderAddRequestValidator, IValidator<OrderUpdateRequest> orderUpdateRequestValidator, UsersMicroserviceClient usersMicroserviceClient) : IOrdersService
+public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IValidator<OrderAddRequest> orderAddRequestValidator, IValidator<OrderUpdateRequest> orderUpdateRequestValidator, UsersMicroserviceClient usersMicroserviceClient, ProductsMicroserviceClient productsMicroserviceClient) : IOrdersService
 {
-    //private readonly IOrdersRepository _orderRepository = orderRepository;
-    //private readonly IMapper _mapper;
-    //private readonly IValidator<OrderAddRequest> _orderAddRequestValidator;
-    //private readonly IValidator<OrderItemAddRequest> _orderItemAddRequestValidator;
-    //private readonly IValidator<OrderItemUpdateRequest> _orderItemUpdateRequestValidator;
-    //private readonly IValidator<OrderUpdateRequest> _orderUpdateRequestValidator;
 
     public async Task<OrderResponse?> AddOrder(OrderAddRequest orderAddRequest)
     {
@@ -31,12 +25,24 @@ public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IV
             throw new ArgumentException(errors);
         }
 
+        foreach (OrderItemAddRequest orderItem in orderAddRequest.OrderItems)
+        {
+            //TO DO: add logic for checking if product exists in the database
+            ProductDTO? product = await productsMicroserviceClient.GetProductByProductId(orderItem.ProductID);
+            if (product == null)
+            {
+                throw new ArgumentException("Invalid Product ID");
+            }
+        }
+
 
         UserDTO? user = await usersMicroserviceClient.GetUserByUserID(orderAddRequest.UserID);
         if (user == null)
         {
             throw new ArgumentException("Invalid User ID");
         }
+
+
 
         Order orderInput = mapper.Map<Order>(orderAddRequest);
 
@@ -115,6 +121,16 @@ public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IV
         {
             string errors = string.Join(", ", orderUpdateRequestValidationResult.Errors.Select(x => x.ErrorMessage));
             throw new ArgumentException(errors);
+        };
+
+        foreach (OrderItemUpdateRequest orderItem in orderUpdateRequest.OrderItems)
+        {
+            //TO DO: add logic for checking if product exists in the database
+            ProductDTO? product = await productsMicroserviceClient.GetProductByProductId(orderItem.ProductID);
+            if (product == null)
+            {
+                throw new ArgumentException("Invalid Product ID");
+            }
         }
 
         UserDTO? user = await usersMicroserviceClient.GetUserByUserID(orderUpdateRequest.UserID);
