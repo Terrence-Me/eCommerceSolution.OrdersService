@@ -11,6 +11,8 @@ services:
       - MONGODB_HOST=mongodb-container
       - MONGODB_PORT=27017
       - MONGODB_DATABASE=OrdersDatabase
+      # - UsersMicroserviceName=host.docker.internal
+      # - UsersMicroservicePort=5295
       - UsersMicroserviceName=users-microservice
       - UsersMicroservicePort=9090
       - ProductsMicroserviceName=products-microservice
@@ -45,7 +47,7 @@ services:
       - MYSQL_DATABASE=ecommerceproductsdatabase
       - MYSQL_PORT=3306
     ports: 
-      - '6000:8080'
+      - '6001:8080'
     networks:
       - products-mysql-network
       - ecommerce-network

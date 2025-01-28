@@ -17,7 +17,8 @@ public class UsersMicroserviceClient
     {
         ArgumentNullException.ThrowIfNull(userId);
 
-        HttpResponseMessage response = await _httpClient.GetAsync($"/api/users/{userId}");
+        HttpResponseMessage response = await _httpClient.GetAsync($"/api/Users/{userId}");
+        //HttpResponseMessage response = await _httpClient.GetAsync($"/api/users/{userId}");
         if (!response.IsSuccessStatusCode)
         {
             if (response.StatusCode == HttpStatusCode.NotFound)

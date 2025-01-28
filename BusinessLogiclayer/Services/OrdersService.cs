@@ -79,6 +79,15 @@ public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IV
             }
         }
 
+        if (addedOrderResponse != null)
+        {
+            if (user != null)
+            {
+                mapper.Map<UserDTO, OrderResponse>(user, addedOrderResponse);
+            }
+
+        }
+
         return addedOrderResponse;
 
     }
@@ -127,6 +136,16 @@ public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IV
                 mapper.Map<ProductDTO, OrderItemResponse>(prductDTO, orderItemResponse);
             }
         }
+        // TO DO: Load UserPersonName and Email
+        if (orderResponse != null)
+        {
+            UserDTO? user = await usersMicroserviceClient.GetUserByUserID(orderResponse.UserID);
+            if (user != null)
+            {
+                mapper.Map<UserDTO, OrderResponse>(user, orderResponse);
+            }
+
+        }
 
 
         return orderResponse;
@@ -156,6 +175,12 @@ public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IV
 
                 mapper.Map<ProductDTO, OrderItemResponse>(prductDTO, orderItemResponse);
             }
+            // TO DO: Load UserPersonName and Email
+            UserDTO? user = await usersMicroserviceClient.GetUserByUserID(orderResponse.UserID);
+            if (user != null)
+            {
+                mapper.Map<UserDTO, OrderResponse>(user, orderResponse);
+            }
         }
 
         return orderResponses.ToList();
@@ -184,6 +209,12 @@ public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IV
                 }
 
                 mapper.Map<ProductDTO, OrderItemResponse>(prductDTO, orderItemResponse);
+            }
+            // TO DO: Load UserPersonName and Email
+            UserDTO? user = await usersMicroserviceClient.GetUserByUserID(orderResponse.UserID);
+            if (user != null)
+            {
+                mapper.Map<UserDTO, OrderResponse>(user, orderResponse);
             }
         }
 
@@ -251,6 +282,15 @@ public class OrdersService(IOrdersRepository orderRepository, IMapper mapper, IV
 
                 mapper.Map<ProductDTO, OrderItemResponse>(prductDTO, orderItemResponse);
             }
+        }
+
+        if (updatedOrderResponse != null)
+        {
+            if (user != null)
+            {
+                mapper.Map<UserDTO, OrderResponse>(user, updatedOrderResponse);
+            }
+
         }
 
         return updatedOrderResponse;
