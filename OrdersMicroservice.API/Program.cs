@@ -30,15 +30,27 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddTransient<IUsersMicroservicePolicies, UsersMicroservicePolicies>();
 
-var usersMicroserviceName = builder.Configuration["UsersMicroserviceName"];
-var usersMicroservicePort = builder.Configuration["UsersMicroservicePort"];
-Console.WriteLine($"http://{usersMicroserviceName}:{usersMicroservicePort}");
+//var usersMicroserviceName = builder.Configuration["UsersMicroserviceName"];
+//var usersMicroservicePort = builder.Configuration["UsersMicroservicePort"];
+//Console.WriteLine($"http://{usersMicroserviceName}:{usersMicroservicePort}");
 
-builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
+builder.Services.AddHttpClient<UsersMicroserviceClient>((serviceProvider, client) =>
 {
-    client.BaseAddress = new Uri($"http://{builder.Configuration["UsersMicroserviceName"]}:{builder.Configuration["UsersMicroservicePort"]}");
-}).AddPolicyHandler(builder.Services.BuildServiceProvider().GetRequiredService<IUsersMicroservicePolicies>().GetRetryPolicy()
-    );
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+    var usersMicroserviceName = configuration["UsersMicroserviceName"];
+    var usersMicroservicePort = configuration["UsersMicroservicePort"];
+    client.BaseAddress = new Uri($"http://{usersMicroserviceName}:{usersMicroservicePort}");
+})
+.AddPolicyHandler((serviceProvider, request) =>
+{
+    var policies = serviceProvider.GetRequiredService<IUsersMicroservicePolicies>();
+    return policies.GetRetryPolicy();
+});
+
+//builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
+//{
+//    client.BaseAddress = new Uri($"http://{builder.Configuration["UsersMicroserviceName"]}:{builder.Configuration["UsersMicroservicePort"]}");
+//}).AddPolicyHandler(builder.Services.BuildServiceProvider().GetRequiredService<IUsersMicroservicePolicies>().GetRetryPolicy());
 
 var productsMicroserviceName = builder.Configuration["ProductsMicroserviceName"];
 var uproductsMicroservicePort = builder.Configuration["ProductsMicroservicePort"];

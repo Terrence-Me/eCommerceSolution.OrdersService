@@ -31,7 +31,19 @@ public class UsersMicroserviceClient
             }
             else
             {
-                throw new HttpRequestException($"Http request failed with status code {response.StatusCode}");
+                //throw new HttpRequestException($"Http request failed with status code {response.StatusCode}");
+
+                // this is situational depenend, if you actually want to return dummy data. 
+                return new UserDTO(
+
+                    PersonName: "Temporarily Unavailable",
+                    Email: "Temporarily Unavailable",
+                    UserId: Guid.Empty,
+                    Gender: "Temporarily Unavailable"
+                    );
+
+
+
             }
 
         }
