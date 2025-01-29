@@ -1,4 +1,5 @@
 using BusinessLogiclayer.HttpClient;
+using BusinessLogiclayer.Policies;
 using eCommerce.OrderMicorservice.API.Middleware;
 using eCommerce.OrderMicorservice.BusinessLogicLayer;
 using eCommerce.OrderMicorservice.DataAccessLayer;
@@ -27,6 +28,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddTransient<IUsersMicroservicePolicies, UsersMicroservicePolicies>();
+
 var usersMicroserviceName = builder.Configuration["UsersMicroserviceName"];
 var usersMicroservicePort = builder.Configuration["UsersMicroservicePort"];
 Console.WriteLine($"http://{usersMicroserviceName}:{usersMicroservicePort}");
@@ -34,7 +37,8 @@ Console.WriteLine($"http://{usersMicroserviceName}:{usersMicroservicePort}");
 builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
 {
     client.BaseAddress = new Uri($"http://{builder.Configuration["UsersMicroserviceName"]}:{builder.Configuration["UsersMicroservicePort"]}");
-});
+}).AddPolicyHandler(builder.Services.BuildServiceProvider().GetRequiredService<IUsersMicroservicePolicies>().GetRetryPolicy()
+    );
 
 var productsMicroserviceName = builder.Configuration["ProductsMicroserviceName"];
 var uproductsMicroservicePort = builder.Configuration["ProductsMicroservicePort"];
