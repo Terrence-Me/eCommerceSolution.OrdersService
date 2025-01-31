@@ -4,6 +4,7 @@ using eCommerce.OrderMicorservice.API.Middleware;
 using eCommerce.OrderMicorservice.BusinessLogicLayer;
 using eCommerce.OrderMicorservice.DataAccessLayer;
 using FluentValidation.AspNetCore;
+using Polly;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +45,10 @@ builder.Services.AddHttpClient<UsersMicroserviceClient>((serviceProvider, client
 .AddPolicyHandler((serviceProvider, request) =>
 {
     var policies = serviceProvider.GetRequiredService<IUsersMicroservicePolicies>();
-    return policies.GetRetryPolicy();
+    var retryPolicy = policies.GetRetryPolicy();
+    var circuitBreakerPolicy = policies.GetCircuitBreakerPolicy();
+    return Policy.WrapAsync(retryPolicy, circuitBreakerPolicy);
+
 });
 
 //builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>

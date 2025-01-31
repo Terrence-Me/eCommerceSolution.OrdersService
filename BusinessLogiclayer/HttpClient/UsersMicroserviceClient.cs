@@ -1,4 +1,6 @@
 ﻿using BusinessLogiclayer.DTO;
+using Microsoft.Extensions.Logging;
+using Polly.CircuitBreaker;
 using System.Net;
 using System.Net.Http.Json;
 using HttpClientAlias = System.Net.Http.HttpClient;
@@ -7,55 +9,71 @@ namespace BusinessLogiclayer.HttpClient;
 public class UsersMicroserviceClient
 {
     private readonly HttpClientAlias _httpClient;
+    private readonly ILogger<UsersMicroserviceClient> _logger;
 
-    public UsersMicroserviceClient(HttpClientAlias httpClient)
+    public UsersMicroserviceClient(HttpClientAlias httpClient, ILogger<UsersMicroserviceClient> logger)
     {
         _httpClient = httpClient;
+        _logger = logger;
     }
 
     public async Task<UserDTO?> GetUserByUserID(Guid userId)
     {
+
         ArgumentNullException.ThrowIfNull(userId);
-
-        HttpResponseMessage response = await _httpClient.GetAsync($"/api/Users/{userId}");
-        //HttpResponseMessage response = await _httpClient.GetAsync($"/api/users/{userId}");
-        if (!response.IsSuccessStatusCode)
+        try
         {
-            if (response.StatusCode == HttpStatusCode.NotFound)
+            HttpResponseMessage response = await _httpClient.GetAsync($"/api/Users/{userId}");
+            //HttpResponseMessage response = await _httpClient.GetAsync($"/api/users/{userId}");
+            if (!response.IsSuccessStatusCode)
             {
-                return null;
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return null;
+                }
+                else if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    throw new HttpRequestException("Bad request", null, HttpStatusCode.BadRequest);
+                }
+                else
+                {
+                    //throw new HttpRequestException($"Http request failed with status code {response.StatusCode}");
+
+                    // this is situational depenend, if you actually want to return dummy data. 
+                    return new UserDTO(
+
+                        PersonName: "Temporarily Unavailable",
+                        Email: "Temporarily Unavailable",
+                        UserId: Guid.Empty,
+                        Gender: "Temporarily Unavailable"
+                        );
+
+
+
+                }
+
             }
-            else if (response.StatusCode == HttpStatusCode.BadRequest)
+
+            UserDTO? user = await response.Content.ReadFromJsonAsync<UserDTO>();
+
+            if (user == null)
             {
-                throw new HttpRequestException("Bad request", null, HttpStatusCode.BadRequest);
-            }
-            else
-            {
-                //throw new HttpRequestException($"Http request failed with status code {response.StatusCode}");
-
-                // this is situational depenend, if you actually want to return dummy data. 
-                return new UserDTO(
-
-                    PersonName: "Temporarily Unavailable",
-                    Email: "Temporarily Unavailable",
-                    UserId: Guid.Empty,
-                    Gender: "Temporarily Unavailable"
-                    );
-
-
-
+                throw new ArgumentException("Invalid User ID");
             }
 
+
+            return user;
         }
-
-        UserDTO? user = await response.Content.ReadFromJsonAsync<UserDTO>();
-
-        if (user == null)
+        catch (BrokenCircuitException ex)
         {
-            throw new ArgumentException("Invalid User ID");
+            _logger.LogError(ex, "Request failed because circuit breaker opened. Returning dummy data");
+            return new UserDTO(
+
+                         PersonName: "Temporarily Unavailable",
+                         Email: "Temporarily Unavailable",
+                         UserId: Guid.Empty,
+                         Gender: "Temporarily Unavailable"
+                         );
         }
-
-
-        return user;
     }
 }
