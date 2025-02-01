@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Bulkhead;
 using Polly.Fallback;
+using Polly.Wrap;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -43,5 +44,15 @@ public class ProductsMicroservicePolicies(ILogger<ProductsMicroservicePolicies> 
                    return response;
                });
         return policy;
+    }
+
+    public IAsyncPolicy<HttpResponseMessage> GetCombinedPolicy()
+    {
+        var bulkheadPolicy = GetBuilkheadPolicy();
+        var fallbackPolicy = GetFallbackPolicy();
+
+        AsyncPolicyWrap<HttpResponseMessage> wrappedPolicy = Policy.WrapAsync(bulkheadPolicy, fallbackPolicy);
+
+        return wrappedPolicy;
     }
 }

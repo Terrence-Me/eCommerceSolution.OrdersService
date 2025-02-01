@@ -3,6 +3,7 @@ using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
 using Polly.Timeout;
+using Polly.Wrap;
 
 namespace BusinessLogiclayer.Policies;
 public class UsersMicroservicePolicies(ILogger<UsersMicroservicePolicies> logger) : IUsersMicroservicePolicies
@@ -43,5 +44,16 @@ public class UsersMicroservicePolicies(ILogger<UsersMicroservicePolicies> logger
         AsyncTimeoutPolicy<HttpResponseMessage> timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(1500), TimeoutStrategy.Pessimistic);
 
         return timeoutPolicy;
+    }
+
+    public IAsyncPolicy<HttpResponseMessage> GetCombinedPolicy()
+    {
+        var retryPolicy = GetRetryPolicy();
+        var circuitBreakerPolicy = GetCircuitBreakerPolicy();
+        var timeoutPolicy = GetTimeoutPolicy();
+
+        AsyncPolicyWrap<HttpResponseMessage> wrappedPolicy = Policy.WrapAsync(retryPolicy, circuitBreakerPolicy, timeoutPolicy);
+
+        return wrappedPolicy;
     }
 }

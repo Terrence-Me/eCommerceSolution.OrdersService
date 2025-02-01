@@ -8,4 +8,6 @@ public interface IUsersMicroservicePolicies
     IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy();
 
     IAsyncPolicy<HttpResponseMessage> GetTimeoutPolicy();
+
+    IAsyncPolicy<HttpResponseMessage> GetCombinedPolicy();
 }

@@ -4,7 +4,6 @@ using eCommerce.OrderMicorservice.API.Middleware;
 using eCommerce.OrderMicorservice.BusinessLogicLayer;
 using eCommerce.OrderMicorservice.DataAccessLayer;
 using FluentValidation.AspNetCore;
-using Polly;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,11 +44,10 @@ builder.Services.AddHttpClient<UsersMicroserviceClient>((serviceProvider, client
 })
 .AddPolicyHandler((serviceProvider, request) =>
 {
-    var policies = serviceProvider.GetRequiredService<IUsersMicroservicePolicies>();
-    var retryPolicy = policies.GetRetryPolicy();
-    var circuitBreakerPolicy = policies.GetCircuitBreakerPolicy();
-    var timeoutPolicy = policies.GetTimeoutPolicy();
-    return Policy.WrapAsync(retryPolicy, circuitBreakerPolicy, timeoutPolicy);
+    var policies = serviceProvider.GetRequiredService<IUsersMicroservicePolicies>()
+   .GetCombinedPolicy();
+    return policies;
+
 
 });
 
@@ -70,9 +68,9 @@ builder.Services.AddHttpClient<ProductsMicroserviceClient>((serviceProvider, cli
 })
 .AddPolicyHandler((serviceProvider, request) =>
 {
-    var policies = serviceProvider.GetRequiredService<IProductsMicroservicePolicies>();
-    var fallbackPolicy = policies.GetFallbackPolicy();
-    return Policy.WrapAsync(fallbackPolicy);
+    var policies = serviceProvider.GetRequiredService<IProductsMicroservicePolicies>().GetCombinedPolicy();
+    return policies;
+
 
 });
 
