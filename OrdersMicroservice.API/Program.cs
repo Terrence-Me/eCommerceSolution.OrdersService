@@ -48,7 +48,8 @@ builder.Services.AddHttpClient<UsersMicroserviceClient>((serviceProvider, client
     var policies = serviceProvider.GetRequiredService<IUsersMicroservicePolicies>();
     var retryPolicy = policies.GetRetryPolicy();
     var circuitBreakerPolicy = policies.GetCircuitBreakerPolicy();
-    return Policy.WrapAsync(retryPolicy, circuitBreakerPolicy);
+    var timeoutPolicy = policies.GetTimeoutPolicy();
+    return Policy.WrapAsync(retryPolicy, circuitBreakerPolicy, timeoutPolicy);
 
 });
 
