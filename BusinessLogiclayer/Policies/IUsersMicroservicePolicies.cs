@@ -3,11 +3,11 @@
 namespace BusinessLogiclayer.Policies;
 public interface IUsersMicroservicePolicies
 {
-    IAsyncPolicy<HttpResponseMessage> GetRetryPolicy();
+    //IAsyncPolicy<HttpResponseMessage> GetRetryPolicy();
 
-    IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy();
+    //IAsyncPolicy<HttpResponseMessage> GetCircuitBreakerPolicy();
 
-    IAsyncPolicy<HttpResponseMessage> GetTimeoutPolicy();
+    //IAsyncPolicy<HttpResponseMessage> GetTimeoutPolicy();
 
     IAsyncPolicy<HttpResponseMessage> GetCombinedPolicy();
 }

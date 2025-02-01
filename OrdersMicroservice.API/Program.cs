@@ -30,6 +30,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddTransient<IUsersMicroservicePolicies, UsersMicroservicePolicies>();
 builder.Services.AddTransient<IProductsMicroservicePolicies, ProductsMicroservicePolicies>();
+builder.Services.AddTransient<IPollyPolicies, PollyPolicies>();
 
 //var usersMicroserviceName = builder.Configuration["UsersMicroserviceName"];
 //var usersMicroservicePort = builder.Configuration["UsersMicroservicePort"];
