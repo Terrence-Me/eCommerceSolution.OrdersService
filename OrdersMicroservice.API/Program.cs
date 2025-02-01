@@ -30,6 +30,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddTransient<IUsersMicroservicePolicies, UsersMicroservicePolicies>();
+builder.Services.AddTransient<IProductsMicroservicePolicies, ProductsMicroservicePolicies>();
 
 //var usersMicroserviceName = builder.Configuration["UsersMicroserviceName"];
 //var usersMicroservicePort = builder.Configuration["UsersMicroservicePort"];
@@ -56,12 +57,22 @@ builder.Services.AddHttpClient<UsersMicroserviceClient>((serviceProvider, client
 //    client.BaseAddress = new Uri($"http://{builder.Configuration["UsersMicroserviceName"]}:{builder.Configuration["UsersMicroservicePort"]}");
 //}).AddPolicyHandler(builder.Services.BuildServiceProvider().GetRequiredService<IUsersMicroservicePolicies>().GetRetryPolicy());
 
-var productsMicroserviceName = builder.Configuration["ProductsMicroserviceName"];
-var uproductsMicroservicePort = builder.Configuration["ProductsMicroservicePort"];
-Console.WriteLine($"http://{productsMicroserviceName}:{uproductsMicroservicePort}");
-builder.Services.AddHttpClient<ProductsMicroserviceClient>(client =>
+//var productsMicroserviceName = builder.Configuration["ProductsMicroserviceName"];
+//var uproductsMicroservicePort = builder.Configuration["ProductsMicroservicePort"];
+//Console.WriteLine($"http://{productsMicroserviceName}:{uproductsMicroservicePort}");
+builder.Services.AddHttpClient<ProductsMicroserviceClient>((serviceProvider, client) =>
 {
+    var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+    var usersMicroserviceName = configuration["ProductsMicroserviceName"];
+    var usersMicroservicePort = configuration["ProductsMicroservicePort"];
     client.BaseAddress = new Uri($"http://{builder.Configuration["ProductsMicroserviceName"]}:{builder.Configuration["ProductsMicroservicePort"]}");
+})
+.AddPolicyHandler((serviceProvider, request) =>
+{
+    var policies = serviceProvider.GetRequiredService<IProductsMicroservicePolicies>();
+    var fallbackPolicy = policies.GetFallbackPolicy();
+    return Policy.WrapAsync(fallbackPolicy);
+
 });
 
 
