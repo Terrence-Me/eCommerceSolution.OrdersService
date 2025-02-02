@@ -37,7 +37,7 @@ public class ProductsMicroservicePolicies(ILogger<ProductsMicroservicePolicies> 
                        QuantityInStock: 0
                    );
 
-                   HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK)
+                   HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)
                    {
                        Content = new StringContent(JsonSerializer.Serialize(product), Encoding.UTF8, "application/json")
                    };
