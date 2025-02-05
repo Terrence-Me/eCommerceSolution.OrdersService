@@ -13,9 +13,9 @@ services:
       - MONGODB_DATABASE=OrdersDatabase
       # - UsersMicroserviceName=host.docker.internal
       # - UsersMicroservicePort=5295
-      - UsersMicroserviceName=users-microservice
-      - UsersMicroservicePort=9090
-      - ProductsMicroserviceName=products-microservice
+      - UsersMicroserviceName=apigateway
+      - UsersMicroservicePort=8080
+      - ProductsMicroserviceName=apigateway
       - ProductsMicroservicePort=8080
       - REDIS_HOST=redis
       - REDIS_PORT=6379
