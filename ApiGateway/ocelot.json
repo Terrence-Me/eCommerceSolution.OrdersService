@@ -10,7 +10,8 @@
         }
       ],
       "UpstreamHttpMethod": [ "GET", "POST", "Options" ],
-      "UpstreamScheme": "http"
+      "UpstreamScheme": "http",
+      "FileCacheOptions": {"TtlSeconds": 30}
     },
     {
       "UpstreamPathTemplate": "/gateway/Orders/search/orderId/{orderId}/",
