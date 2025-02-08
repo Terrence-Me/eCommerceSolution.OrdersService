@@ -1,4 +1,5 @@
 ﻿using BusinessLogiclayer.Mappers;
+using BusinessLogiclayer.RabbitMQ;
 using BusinessLogiclayer.ServiceContracts;
 using BusinessLogiclayer.Services;
 using BusinessLogiclayer.Validators;
@@ -18,6 +19,9 @@ public static class DependencyInjection
         {
             options.Configuration = $"{configuration["REDIS_HOST"]}:{configuration["REDIS_PORT"]}";
         });
+
+        services.AddTransient<IRabbitMQProductNameUpdateConsumer, RabbitMQProductNameUpdateConsumer>();
+        services.AddHostedService<RabbitMQProductNameUpdateHostedService>();
 
         return services;
     }
