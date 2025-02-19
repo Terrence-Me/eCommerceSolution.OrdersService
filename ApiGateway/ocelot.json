@@ -5,24 +5,24 @@
       "DownstreamPathTemplate": "/api/Orders",
       "DownstreamHostAndPorts": [
         {
-          "Host": "ordersmicroservice.api",
+          "Host": "orders-microservice",
           "Port": 8080
         }
       ],
-      "UpstreamHttpMethod": [ "GET", "POST", "Options" ],
+      "UpstreamHttpMethod": ["GET", "POST", "Options"],
       "UpstreamScheme": "http",
-      "FileCacheOptions": {"TtlSeconds": 30}
+      "FileCacheOptions": { "TtlSeconds": 30 }
     },
     {
       "UpstreamPathTemplate": "/gateway/Orders/search/orderId/{orderId}/",
       "DownstreamPathTemplate": "/api/Orders/search/orderId/{orderId}",
       "DownstreamHostAndPorts": [
         {
-          "Host": "ordersmicroservice.api",
+          "Host": "orders-microservice",
           "Port": 8080
         }
       ],
-      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamHttpMethod": ["GET"],
       "UpstreamScheme": "http"
     },
     {
@@ -30,11 +30,11 @@
       "DownstreamPathTemplate": "/api/Orders/search/product/{productId}",
       "DownstreamHostAndPorts": [
         {
-          "Host": "ordersmicroservice.api",
+          "Host": "orders-microservice",
           "Port": 8080
         }
       ],
-      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamHttpMethod": ["GET"],
       "UpstreamScheme": "http"
     },
     {
@@ -42,11 +42,11 @@
       "DownstreamPathTemplate": "/api/Orders/search/orderDate/{orderDate}",
       "DownstreamHostAndPorts": [
         {
-          "Host": "ordersmicroservice.api",
+          "Host": "orders-microservice",
           "Port": 8080
         }
       ],
-      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamHttpMethod": ["GET"],
       "UpstreamScheme": "http"
     },
     {
@@ -54,11 +54,11 @@
       "DownstreamPathTemplate": "/api/Orders/search/userId/{userId}",
       "DownstreamHostAndPorts": [
         {
-          "Host": "ordersmicroservice.api",
+          "Host": "orders-microservice",
           "Port": 8080
         }
       ],
-      "UpstreamHttpMethod": [ "GET" ],
+      "UpstreamHttpMethod": ["GET"],
       "UpstreamScheme": "http"
     },
     {
@@ -66,11 +66,11 @@
       "DownstreamPathTemplate": "/api/Orders/add-order",
       "DownstreamHostAndPorts": [
         {
-          "Host": "ordersmicroservice.api",
+          "Host": "orders-microservice",
           "Port": 8080
         }
       ],
-      "UpstreamHttpMethod": [ "Post", "Options" ],
+      "UpstreamHttpMethod": ["Post", "Options"],
       "UpstreamScheme": "http"
     },
     {
@@ -78,11 +78,11 @@
       "DownstreamPathTemplate": "/api/Orders/{orderId}",
       "DownstreamHostAndPorts": [
         {
-          "Host": "ordersmicroservice.api",
+          "Host": "orders-microservice",
           "Port": 8080
         }
       ],
-      "UpstreamHttpMethod": [ "Put", "Delete", "Options" ],
+      "UpstreamHttpMethod": ["Put", "Delete", "Options"],
       "UpstreamScheme": "http"
     },
     {
@@ -94,7 +94,7 @@
           "Port": 8080
         }
       ],
-      "UpstreamHttpMethod": [ "Get", "Put", "Post", "Options" ],
+      "UpstreamHttpMethod": ["Get", "Put", "Post", "Options"],
       "UpstreamScheme": "http",
       "QoSOptions": {
         "ExceptionsAllowedBeforeBreaking": 3,
@@ -123,7 +123,7 @@
           "Port": 8080
         }
       ],
-      "UpstreamHttpMethod": [ "Delete", "Options" ],
+      "UpstreamHttpMethod": ["Delete", "Options"],
       "UpstreamScheme": "http"
     },
     {
@@ -135,7 +135,7 @@
           "Port": 8080
         }
       ],
-      "UpstreamHttpMethod": [ "Get" ],
+      "UpstreamHttpMethod": ["Get"],
       "UpstreamScheme": "http"
     },
     {
@@ -147,7 +147,7 @@
           "Port": 8080
         }
       ],
-      "UpstreamHttpMethod": [ "Get" ],
+      "UpstreamHttpMethod": ["Get"],
       "UpstreamScheme": "http"
     },
     {
@@ -159,7 +159,7 @@
           "Port": 9090
         }
       ],
-      "UpstreamHttpMethod": [ "Post", "Options" ],
+      "UpstreamHttpMethod": ["Post", "Options"],
       "UpstreamScheme": "http"
     },
     {
@@ -171,7 +171,7 @@
           "Port": 9090
         }
       ],
-      "UpstreamHttpMethod": [ "Post", "Options" ],
+      "UpstreamHttpMethod": ["Post", "Options"],
       "UpstreamScheme": "http"
     },
     {
@@ -183,7 +183,7 @@
           "Port": 9090
         }
       ],
-      "UpstreamHttpMethod": [ "Get" ],
+      "UpstreamHttpMethod": ["Get"],
       "UpstreamScheme": "http"
     }
   ],
